@@ -44,4 +44,4 @@ def toggle_punch(group_id, time=time.time()):
 
 def add_note(group_id, note, time=time.time()):
     # TODO: validate group exists, note is valid str
-    notes.insert(group_id=group_id, time=time, note=note)
+    notes.insert(dict(group_id=group_id, time=time, note=note))
