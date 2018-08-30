@@ -26,9 +26,14 @@ def punch_in(group_id, in_time=time.time()):
 def punch_out(group_id, out_time=time.time()):
     # TODO: validate conditions: exactly one time in group is None,
     # group is punched in
+    if not 'out_time' in times.columns:
+        times.create_column('out_time', db.types.float)
+
     db.begin()
 
-    interval = times.find_one(group_id=group_id)
+    print(group_id)
+    interval = times.find_one(group_id=group_id, out_time=None)
+    print(interval)
     interval['out_time'] = out_time
     print(interval)
     times.update(interval, ['id'])
