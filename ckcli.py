@@ -12,11 +12,11 @@ def print_info():
                 row['name']
               ))
 
-def print_report(group_id):
+def print_report(group_id, weeks_back=0):
     times = list(clockkeep.times.find(group_id=group_id, order_by='in_time'))
     #print([time for time in times])
 
-    time_matrix = get_time_matrix(times, 7)
+    time_matrix = get_time_matrix(times, 7, weeks_back)
     #print(time_matrix)
 
     notes = list(clockkeep.notes.find(group_id=group_id, order_by='time'))
@@ -31,12 +31,12 @@ def print_report(group_id):
     for note in notes:
         print(time.ctime(note['time'])+': ' + note['note'])
 
-def get_time_matrix(times, days):
+def get_time_matrix(times, days, weeks_back):
     for row in times:
         if row['out_time'] == None:
             row['out_time'] = time.time()
     time_matrix = []
-    last_day = date.today()
+    last_day = date.today() - timedelta(weeks=weeks_back)
     last_day = last_day + timedelta(days=(6 - last_day.weekday()))
     #print(last_day.ctime())
     for days_back in range(days):
@@ -70,6 +70,10 @@ while True:
         clockkeep.add_note(group_id, note)
     elif command[0] == 'a':
         name = command[1:]
+        if ' ' in command:
+            weeks_back = command.split(' ', 1)
+        else:
+            weeks_back = 0
         clockkeep.add_group(name)
     elif command[0] == 'r':
         group_id = command[1:]
