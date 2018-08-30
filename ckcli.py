@@ -4,7 +4,7 @@ import clockkeep
 
 def print_info():
     groups = clockkeep.groups.find(inactive=False)
-    print('in:  id:  name:')
+    print('\nin:  id:  name:')
     for row in groups:
         print('[%s] [%i]   %s' % (
                 '*' if row['punched_in'] else ' ',
@@ -14,17 +14,18 @@ def print_info():
 
 def print_report(group_id):
     times = list(clockkeep.times.find(group_id=group_id, order_by='in_time'))
-    print([time for time in times])
+    #print([time for time in times])
 
     time_matrix = get_time_matrix(times, 7)
-    print(time_matrix)
+    #print(time_matrix)
 
     notes = list(clockkeep.notes.find(group_id=group_id, order_by='time'))
-    print([note for note in notes])
+    #print([note for note in notes])
 
+    print('       Mon Tue Wed Thu Fri Sat Sun')
     for row in range(24):
         time_row = ['_' if time_matrix[day][row] == 0 else '#' for day in range(7)]
-        time_row = ' |'.join(time_row)
+        time_row = ' | '.join(time_row)
         print(str(row).rjust(3) + ':00  ' + time_row)
 
     for note in notes:
@@ -35,11 +36,13 @@ def get_time_matrix(times, days):
         if row['out_time'] == None:
             row['out_time'] = time.time()
     time_matrix = []
-    today = date.today()
+    last_day = date.today()
+    last_day = last_day + timedelta(days=(6 - last_day.weekday()))
+    #print(last_day.ctime())
     for days_back in range(days):
         hours_list = []
         for hour in range(24): # This got complicated to account for DST, but there are still odd edge cases
-            hour_start = datetime(today.year, today.month, today.day, hour) - timedelta(days=days_back)
+            hour_start = datetime(last_day.year, last_day.month, last_day.day, hour) - timedelta(days=days_back)
             hour_end = hour_start + timedelta(hours=1)
             interval = [time.mktime(x.timetuple()) for x in [hour_start, hour_end]]
             number = 1 if are_times_in_interval(interval, times) else 0
@@ -56,7 +59,9 @@ def are_times_in_interval(interval, times):
 while True:
     print_info()
     command = input(':')
-    if command.isdigit():
+    if command == '':
+        pass
+    elif command.isdigit():
         group_id = int(command)
         clockkeep.toggle_punch(group_id)
     elif command[0] == 'n':
