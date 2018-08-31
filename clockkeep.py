@@ -11,7 +11,7 @@ def add_group(name, inactive=False):
     # TODO: validate conditions: group does not exist, name is valid str
     groups.insert(dict(name=name, inactive=False, punched_in=False))
 
-def punch_in(group_id, in_time=time.time()):
+def punch_in(group_id, in_time):
     # TODO: validate conditions: group is punched out,
     # no out times are None within group
     db.begin()
@@ -23,7 +23,7 @@ def punch_in(group_id, in_time=time.time()):
 
     db.commit()
 
-def punch_out(group_id, out_time=time.time()):
+def punch_out(group_id, out_time):
     # TODO: validate conditions: exactly one time in group is None,
     # group is punched in
     if not 'out_time' in times.columns:
@@ -41,14 +41,14 @@ def punch_out(group_id, out_time=time.time()):
 
     db.commit()
 
-def toggle_punch(group_id, time=time.time()):
+def toggle_punch(group_id, tog_time):
     # TODO: validate conditions: group exists
     punched_in = groups.find_one(id=group_id)['punched_in']
     if punched_in:
-        punch_out(group_id, time)
+        punch_out(group_id, tog_time)
     else:
-        punch_in(group_id, time)
+        punch_in(group_id, tog_time)
 
-def add_note(group_id, note, note_time=time.time()):
+def add_note(group_id, note, note_time):
     # TODO: validate group exists, note is valid str
     notes.insert(dict(group_id=group_id, time=note_time, note=note))

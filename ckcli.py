@@ -13,6 +13,11 @@ def print_info():
               ))
 
 def print_report(group_id, weeks_back=0):
+    #week_time_start = date.today() - timedelta(weeks=weeks_back) + timedelta(days=(7 - date.today().weekday()))
+    #week_time_end = week_time_start - timedelta(weeks=1, days=1)
+    #interval = [time.mktime(x.timetuple()) for x in [week_time_start, week_time_end]]
+    # TODO: Only query for time-relevant data
+
     times = list(clockkeep.times.find(group_id=group_id, order_by='in_time'))
     #print([time for time in times])
 
@@ -63,11 +68,11 @@ while True:
         pass
     elif command.isdigit():
         group_id = int(command)
-        clockkeep.toggle_punch(group_id)
+        clockkeep.toggle_punch(group_id, time.time())
     elif command[0] == 'n':
         group_id, note = command[1:].split(' ', 1)
         group_id = int(group_id)
-        clockkeep.add_note(group_id, note)
+        clockkeep.add_note(group_id, note, time.time())
     elif command[0] == 'a':
         name = command[1:]
         if ' ' in command:
