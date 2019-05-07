@@ -1,3 +1,5 @@
+This is buggy and unmaintained. [Timewarrior](https://taskwarrior.org/docs/timewarrior/) is very similar to what I envisioned.
+
 # clockeep
 Minimal utility to track time usage and productivity
 
